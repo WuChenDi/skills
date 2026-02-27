@@ -1,55 +1,85 @@
-# skills
+# Skills
 
-本仓库用于存放一组可复用的 **Claude Code 插件（Plugins）/技能（Skills）**。每个技能以“插件”的形式独立打包，包含：
+A collection of reusable **Claude Code Plugins / Skills**.
 
-- `.claude-plugin/plugin.json`：插件清单（元数据、可选的路径配置）
-- `skills/<skill-name>/SKILL.md`：技能的系统提示词与使用说明（Claude 会按此执行）
-- `assets/` 等资源：供技能读取/渲染（例如 HTML 模板）
+Each skill is packaged as a standalone plugin with:
 
-## 目录结构
+- `.claude-plugin/plugin.json` — manifest & metadata
+- `skills/<skill-name>/SKILL.md` — system prompt + usage guide
+- Optional `assets/` — HTML templates, resources, etc.
 
-当前仓库结构（示例）：
+## Install
 
-```text
-skills/
-  skills/
-    explain-words/                # 一个插件（plugin root）
-      .claude-plugin/
-        plugin.json               # 插件 manifest
-        marketplace.json          # 可选：本地/自建 marketplace 目录（用于安装）
-      skills/
-        explain-words/
-          SKILL.md                # 技能说明与指令
-          assets/
-            word_card.html        # 技能使用的 HTML 模板
-```
-
-## 快速开始（本地加载插件）
-
-开发/自用最简单的方式是用 `--plugin-dir` 直接加载插件目录（无需安装到 marketplace）：
+Most convenient way — use the `skills` CLI (open agent skills standard):
 
 ```bash
+# Install all skills from this repo
+npx skills add wuchendi/skills
+
+# Install a specific skill
+npx skills add wuchendi/skills --skill explain-words
+
+# List available skills in this repo
+npx skills add wuchendi/skills --list
+```
+
+> **Note**: If you prefer not to use the `npx skills` tool, you can still load plugins manually:
+
+```bash
+# Load directly from local folder (great for development)
 claude --plugin-dir ./skills/explain-words
 ```
 
-启动后，该插件下的技能会以 **命名空间** 形式出现（格式为 `/插件名:技能名`）。
+After loading, skills appear with **namespace prefix**:
 
-例如 `explain-words` 插件里的 `explain-words` 技能，调用形如：
-
-```text
+```
 /explain-words:explain-words Serendipity
 ```
 
-> 说明：Claude Code 的插件技能为避免冲突，默认都会被命名空间前缀化（详见官方插件文档）。
+## Available Skills
 
-<!-- ## 贡献/新增一个技能
+| Skill              | Description                                      | Invocation example                        |
+|--------------------|--------------------------------------------------|--------------------------------------------|
+| [explain-words](skills/explain-words/) | Explain English words with etymology, examples, usage cards (HTML render support) | `/explain-words:explain-words serendipity` |
 
-建议每个技能都单独建一个插件目录，沿用仓库现有布局：
+## Directory Structure (example)
 
-1. 新建 `skills/<your-plugin>/`
-2. 添加 `.claude-plugin/plugin.json`
-3. 添加 `skills/<your-skill>/SKILL.md`（可搭配 `assets/`、`scripts/` 等）
-4. 在 `SKILL.md` 的 frontmatter 中维护 `name/description/metadata.version` -->
+```
+skills/
+  explain-words/                  # plugin root
+  ├── .claude-plugin/
+  │   ├── plugin.json
+  │   └── marketplace.json        # optional
+  └── skills/
+      └── explain-words/
+          ├── SKILL.md
+          └── assets/
+              └── word_card.html
+```
+
+## Why plugin-per-skill structure?
+
+- Avoids command/skill name conflicts
+- Easier to publish / share individually later
+- Compatible with Claude Code plugin marketplace (when you add `.claude-plugin/marketplace.json`)
+
+## Contributing / Adding a Skill
+
+1. Create new folder `skills/<your-plugin-name>/`
+2. Add `.claude-plugin/plugin.json` (minimal example below)
+3. Add `skills/<skill-name>/SKILL.md` with good frontmatter
+4. (Optional) Add `assets/`, `scripts/`, etc.
+5. Test locally with `claude --plugin-dir ./skills/<your-plugin-name>`
+
+Minimal `plugin.json` example:
+
+```json
+{
+  "name": "explain-words",
+  "version": "1.0.0",
+  "description": "Word explanation skill with nice cards"
+}
+```
 
 ## 📜 License
 
