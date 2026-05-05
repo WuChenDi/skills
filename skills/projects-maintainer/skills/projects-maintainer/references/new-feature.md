@@ -40,25 +40,31 @@ If the user gave you a 3-paragraph spec but the change is small, it's still wort
 
 ### Workers (Hono)
 
-- Route file under `src/routes/<group>.ts`. Compose into the app via `src/routes/index.ts`.
-- Validation via `@hono/zod-validator`. Schema lives next to the route or in `src/lib/validationSchemas.ts` if shared.
-- DB access through Drizzle. Always filter by `eq(table.isDeleted, false)`. Never call `db.delete()`.
-- New env var? Add it to:
-  - `wrangler.jsonc` `vars` block (with a placeholder)
-  - `.env.example` (real local default)
-  - `src/types.ts` if there's a typed `createConfig(env)` pattern in this app
-- New error? Throw `HTTPException` with a status; the global `onError` will format it.
-- Cron job? Add a function under `src/cron/`, then wire `scheduled()` in `src/index.ts`. Schedule lives in `wrangler.jsonc` `triggers.crons`.
-- Durable Object? New class file under `src/durable-objects/<name>.ts`, registered in `wrangler.jsonc` `durable_objects.bindings` and `migrations`. SQLite-backed DOs use `new_sqlite_classes` migrations.
+Reference apps for the patterns below: `byplay-log` (minimal), `dropply-api` (full middleware + Drizzle + cron + email), `shortener` (KV + AI + analytics + JWT), `live-user` (Durable Object + WebSocket hibernation), `baccarat` (Durable Object + game state).
+
+- **Route file** under `src/routes/<group>.ts`, composed via `src/routes/index.ts`. Pattern: `dropply-api/src/routes/`.
+- **Validation** via `@hono/zod-validator`. Schemas next to the route, or `src/lib/validationSchemas.ts` if shared (see `dropply-api`).
+- **DB**: Drizzle, filtered by `eq(table.isDeleted, false)`. Never `db.delete()`.
+- **New env var**: add to `wrangler.jsonc` `vars`, `.env.example`, and (if the app has a typed `createConfig(env)`) `src/types.ts`. `baccarat/src/types.ts` is the reference for the typed config pattern.
+- **New error**: throw `HTTPException` with status; the global `onError` formats it.
+- **Cron**: function under `src/cron/`, wired from `scheduled()` in `src/index.ts`. Schedule in `wrangler.jsonc` `triggers.crons`. See `dropply-api/src/cron/cleanup.ts` and `shortener/src/cron/cleanup.ts`.
+- **Durable Object**: new class file under `src/durable-objects/<name>.ts`, registered in `wrangler.jsonc` `durable_objects.bindings` and `migrations`. SQLite-backed DOs use `new_sqlite_classes` migrations.
+  - Game-state DO with embedded SQLite: see `baccarat/src/durable-objects/game-room.ts`.
+  - WebSocket-hibernation DO: see `live-user/src/site-manager.ts` — uses `ctx.acceptWebSocket(server)` so the DO unloads when idle. **Watch out**: `webSocketClose` is called *after* the socket is already closed; never call `ws.close()` from there or it throws.
+- **Per-request stateful clients** (Telegram bot, OAuth client): construct **per request**, not at module top-level. Reusing across requests breaks on Workers — see how `baccarat/src/handlers/commands.ts` constructs a fresh `Bot` in each webhook invocation.
 
 ### Next.js
 
-- Page route: `app/<route>/page.tsx`, plus optional `loading.tsx`, `error.tsx`. With i18n: `app/[locale]/<route>/page.tsx`.
-- Server route handler: `app/api/<name>/route.ts`. If the data is simple and read-only, prefer a Server Component; route handlers earn their place when there's a real RPC reason.
-- Client UI piece: `src/components/<feature>/<Name>.tsx`. Group by feature, not by type. `'use client'` only on the components that actually need it.
-- State: Zustand store in `src/stores/<feature>-store.ts`. Persist only when the user expects state across reloads; everything else is in-memory.
-- Data fetch: TanStack Query if the app already uses it; otherwise Server Components / `fetch` in route handlers.
-- Strings: every user-visible string goes into `messages/{en,zh}.json`. Don't ship hardcoded `'Save'` / `'保存'` buttons.
+Reference apps: `SecureC` and `dropply-web` (i18n, layout pattern), `flox` (single-locale, complex search), `bycut` (manager-based architecture), `clearify` (multi-mode toolbox with `--webpack` build).
+
+- **Page route**: `app/[locale]/<route>/page.tsx` (with i18n) or `app/<route>/page.tsx` (without). Optional `loading.tsx` / `error.tsx` siblings.
+- **Server route handler**: `app/api/<name>/route.ts`. For SSE-style fan-out, see `flox/src/app/api/search-parallel/route.ts` — it streams JSON SSE chunks with `type: 'start' | 'result' | 'error' | 'done'`.
+- **Client UI**: `src/components/<feature>/<Name>.tsx`. Group by feature. `'use client'` only on components that actually need it.
+- **State**: Zustand store in `src/stores/<feature>-store.ts`, with `persist` middleware when state should survive reloads. `flox/src/lib/store/` has many examples (`favorites-store`, `history-store`, `search-history-store`, `settings-store`).
+- **Data fetch**: TanStack Query if the app already uses it (`text2img`, `dropply-web`); otherwise Server Components / `fetch` in route handlers.
+- **Strings (i18n apps)**: every user-visible string keyed in **both** `messages/en.json` and `messages/zh.json`. `useTranslations()` in client components, `getTranslations()` in server.
+- **Heavy compute / wasm / models**: in a Web Worker, not the main thread. See `bycut/src/services/transcription/worker.ts` (Hugging Face Transformers), `SecureC/src/workers/cryptoWorker.ts` (cipher streaming).
+- **Manager-based subsystems** (only if the app is editor-shaped like `bycut`): `src/core/managers/<thing>-manager.ts`, plus a `commands.ts` undo/redo bus. Don't reach for this pattern in a regular CRUD app.
 
 ### Nuxt
 
@@ -103,10 +109,7 @@ If the feature touches multiple unrelated areas of the app, split into multiple 
 
 ## Common pitfalls
 
-- **Reaching for a new dep when the existing one would do** — check the app's `package.json` and `references/stack.md` first.
-- **Hardcoding strings in an i18n app** — they need keys in both `en.json` and `zh.json`.
-- **Forgetting `await` on a fire-and-forget call** — `noFloatingPromises` will fail lint. If the call genuinely is fire-and-forget, mark it `void <call>` with a comment.
-- **Using `import { z } from 'zod'`** — fails Biome. Always `import * as z from 'zod'`.
-- **Adding a feature flag that's never going to be flipped off** — just commit the behavior change directly.
-- **Adding a database column without a migration** — `pnpm --filter <worker> db:gen` after every schema edit. The migration file *is* the schema diff.
-- **Storing the encryption key on the server** — for `dropply-*` and `SecureC`, the server must never see plaintext or keys. Re-read the app's section in `CLAUDE.md` if you're touching crypto.
+- Hardcoding strings in an i18n app — keys must exist in **both** `en.json` and `zh.json`.
+- Adding a database column without `pnpm --filter <worker> db:gen` — the generated migration file is the source of truth, not the schema TS edit.
+- Storing the encryption key server-side in `dropply-*` / `SecureC` — the server never sees plaintext or keys. `dropply-web` keeps the key in the URL fragment (`#key=…`); re-read `dropply-web/src/lib/crypto.ts` and `SecureC/src/workers/cryptoWorker.ts` before touching crypto.
+- Reusing a stateful client (Telegram bot, WebSocket) across requests on a Worker — construct per-request. See `baccarat/src/handlers/commands.ts`.

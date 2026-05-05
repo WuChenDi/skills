@@ -4,55 +4,33 @@ Rules and patterns that should hold across every package and app. Read this when
 
 ## Code style
 
-- Single quotes, no semicolons, 2-space indent. Biome handles formatting.
-- `import type { X } from '…'` — the `useImportType` rule is set to `separatedType`. Mixing types and values in one import statement fails lint.
-- `import * as z from 'zod'` is mandatory. `import { z } from 'zod'` is blocked by `noRestrictedImports`.
-- Every async call is awaited or explicitly `void`-ed. `noFloatingPromises` and `noMisusedPromises` are errors.
-- Use `// @ts-expect-error <reason>`, never `// @ts-ignore`. Always include a brief reason.
-- `Date.now()` instead of `new Date().getTime()` (`useDateNow` is an error).
-- No `delete obj.prop` (`noDelete` is an error). Set `obj.prop = undefined` or restructure.
-- Unused imports surface as warnings (`noUnusedImports`); fix them — don't add `// biome-ignore` to silence them.
-- `noImplicitAnyLet` is a warning — type your `let` declarations.
+Biome handles formatting. Hard rules at error level:
+
+- Single quotes, no semicolons, 2-space indent.
+- `import type { X }` (separated form). `import { type X }` fails lint.
+- `import * as z from 'zod'`. `import { z }` is blocked.
+- Every async call awaited or `void`-ed (`noFloatingPromises`, `noMisusedPromises`).
+- `// @ts-expect-error <reason>`, never `// @ts-ignore`.
+- `Date.now()`, never `new Date().getTime()`.
+- No `delete obj.prop`.
+
+Warnings worth fixing rather than silencing: `noUnusedImports`, `noImplicitAnyLet`.
 
 ## Lint domain overrides
 
-`biome.json` enables domain-specific rules per app:
-
-```jsonc
-"overrides": [
-  {
-    "includes": ["apps/<react-app>/**/*"],
-    "linter": { "domains": { "next": "recommended", "react": "recommended" } }
-  },
-  {
-    "includes": ["apps/<vue-app>/**/*"],
-    "linter": { "domains": { "vue": "recommended" } }
-  }
-]
-```
-
-When you add a new app, add it to the right `overrides` block. If it's a Worker (no UI domain), it falls under the recommended-off baseline and needs no override.
+New React/Next app → add path to the `next` + `react` domain override in `biome.json`. New Vue/Nuxt app → `vue` domain override **and** add its `**/*` to `files.includes` exclusions (Nuxt brings its own ESLint). Worker → no override needed.
 
 ## Files Biome should ignore
 
-The root `biome.json` `files.includes` is an allow-list with `!` negations for build artifacts plus a few app-specific carve-outs:
-
-- All build output: `dist`, `build`, `public`, `.next`, `.out`, `.wrangler`, `.turbo`, `.cache`
-- `apps/repo-changelog/**` — Nuxt 4 has its own ESLint config
-- `apps/<worker>/src/database/**/*.{json,sql}` — generated migration artefacts
-- `packages/ui/src/{components,reactbits}/**/*.tsx` — shadcn/reactbits-derived sources
-
-When you add a new app or package that emits generated code or vendors third-party templates, extend `files.includes` accordingly.
+Build output (`dist`, `build`, `public`, `.next`, `.out`, `.wrangler`, `.turbo`, `.cache`) and generated artefacts (`apps/<worker>/src/database/**/*.{json,sql}`, `packages/ui/src/{components,reactbits}/**/*.tsx`) are excluded. `apps/repo-changelog/**` is excluded because Nuxt has its own ESLint. Extend `files.includes` for any new generated/vendored sources.
 
 ## Dependencies
 
-- **Catalogs are the source of truth.** `pnpm-workspace.yaml` declares two: `prod` (runtime libs the app ships) and `dev` (build/test/types). Reference as `"react": "catalog:prod"` / `"typescript": "catalog:dev"` in `package.json`.
-- **Bumping a shared dep** = edit `pnpm-workspace.yaml`, not each `package.json`. Every consumer picks it up on `pnpm install`.
-- **Adding a new dep**:
-  - If multiple apps will use it, put it in the right catalog and reference `catalog:prod|dev`.
-  - If only one app needs it, you may add it as a literal version in that app's `package.json`. If a second app picks it up later, promote it to the catalog at that point.
-- **Cross-package imports** use the workspace protocol: `"@cdlab996/utils": "workspace:*"`.
-- **tsdown-built packages** (`utils`, `cipher`, `uncrypto`) ship from `dist/`. After editing, run `pnpm --filter @cdlab996/<pkg> build` (or `dev --watch`) so consumers see the change. `pnpm prepare` (auto-run after install) builds them in topological order.
+- Catalogs in `pnpm-workspace.yaml` are the source of truth. `prod` for runtime, `dev` for tooling. Reference as `"react": "catalog:prod"`.
+- Bump a shared dep by editing `pnpm-workspace.yaml`, not individual `package.json`s.
+- New dep used by multiple apps → catalog. Used by exactly one → literal version in that app, promote later if a second app picks it up.
+- Cross-package imports: `"@cdlab996/utils": "workspace:*"`.
+- `utils`, `cipher`, `uncrypto` are tsdown-built; rebuild after editing (`pnpm --filter @cdlab996/<pkg> build`) or run `dev --watch`. `pnpm prepare` does this automatically post-install.
 
 ## Workspace package metadata
 
@@ -87,10 +65,10 @@ Apps additionally use `version: "0.1.0"` if they're pre-1.0.
 
 ## i18n (next-intl)
 
-- Files: `apps/<app>/messages/{en,zh}.json`. Both files must define every user-visible key.
-- Route layout: `app/[locale]/…`. The locale segment is wired through `middleware.ts` (the next-intl locale middleware).
-- Generated artefact `apps/*/messages/en.d.json.ts` is gitignored and excluded from Biome.
-- When adding an i18n app, also add its `messages/` path to `i18n-ally.localesPaths` in `.vscode/settings.json` so the IDE picks it up.
+- `messages/{en,zh}.json` — both define every user-visible key.
+- Routes under `app/[locale]/…`; `middleware.ts` is the next-intl locale middleware.
+- `messages/en.d.json.ts` is generated, gitignored, Biome-excluded.
+- Add new app's `messages/` path to `.vscode/settings.json` `i18n-ally.localesPaths`.
 
 ## API response envelope (Workers)
 
@@ -100,27 +78,19 @@ For errors:
 { statusCode: number, message: string, stack?: string[] }
 ```
 
-`stack` is included only when `globalThis.isDebug === true`. The same shape is returned by the global `app.onError` and `app.notFound` handlers in `src/index.ts`.
+`stack` is included only when `globalThis.isDebug === true`. Same shape from `app.onError` and `app.notFound`. See `byplay-log/src/index.ts` and `dropply-api/src/index.ts` — both use this exact pattern; copy from there when adding a new Worker.
 
-For success, use whatever shape fits the route — but be consistent inside a single app.
+For success, use whatever shape fits the route — be consistent inside a single app.
 
 ## Soft delete
 
-Tables share a `trackingFields` block:
+Tables share a `trackingFields` block — see `dropply-api/src/database/schema.ts` for the canonical definition. **Never hard-delete.** Every read filters `eq(table.isDeleted, false)`; the cleanup cron may purge old soft-deleted rows, but app code never calls `db.delete()` on user-facing tables.
 
-```ts
-const trackingFields = {
-  createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
-  updatedAt: integer({ mode: 'timestamp' }).$onUpdateFn(() => new Date()).notNull(),
-  isDeleted: integer({ mode: 'boolean' }).default(false).notNull(),
-}
-```
-
-**Never hard-delete.** Every read filters `eq(table.isDeleted, false)` (or `0`). The cleanup cron may eventually purge old soft-deleted rows, but the application code never calls `db.delete()` on a user-facing table.
+`shortener/src/cron/cleanup.ts` is the cleanup-cron pattern: scheduled via `wrangler.jsonc` `triggers.crons`, invoked from the Worker's `scheduled()` handler, and (in the case of `shortener`) also clears the matching KV cache entries.
 
 ## Cache invalidation (apps that use Cloudflare KV)
 
-When a record has multiple cache keys (`url:{hash}`, `og:{hash}`, `ai:slug:{url}` in `shortener`), invalidate all of them in the same operation. Three-key invalidation that drifts apart will leak stale data.
+`shortener` is the reference: every record has up to three keys (`url:{hash}`, `og:{hash}`, `ai:slug:{url}`). Invalidate all of them in the same operation — drift between the three leaks stale data. Look at `shortener/src/cron/cleanup.ts` and the KV writes in `shortener/src/utils/slug.ts` when adding a new cached entity.
 
 ## Commits
 

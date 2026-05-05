@@ -169,8 +169,7 @@ Don't squash the prep commits into the bump itself — keeping them separate let
 
 ## Common pitfalls
 
-- **Bumping `react` and `next` separately** — they're tightly coupled. Bump together, on a date when next supports the new react.
-- **Forgetting to rebuild workspace packages** — consumers pick up old `dist/`. Run `pnpm prepare` after any edit to `packages/*` deps.
-- **Bumping `tsdown` or `vitest` blindly** — these are dev tooling and a Major bump can change config shape (`tsdown.config.ts`). Read release notes.
-- **Pinning `typescript` to a Major bump alone** — re-run `pnpm --filter ./packages/tsconfig build` and verify each shared config still parses with the new compiler.
-- **Updating `compatibility_date` without `compatibility_flags`** — usually fine, but check if the new date implicitly enables a flag you were depending on the absence of.
+- Bumping `react` and `next` separately — bump together, after checking the next release supports the new react.
+- Major bumping `tsdown` / `vitest` without reading release notes — config shape (`tsdown.config.ts`) often changes.
+- Bumping `typescript` Major alone — rerun `pnpm --filter @cdlab996/tsconfig build` and verify each shared config still parses.
+- New `compatibility_date` may implicitly flip a `compatibility_flags` default — diff the Cloudflare release notes for the date you're bumping to.

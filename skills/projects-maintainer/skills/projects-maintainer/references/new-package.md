@@ -113,8 +113,7 @@ Don't dump the full README in there — keep it terse and architectural.
 
 ## Common pitfalls
 
-- **Forgetting to add `build` script** — Turbo's `pnpm prepare` skips the package, consumers fail to resolve the new export.
-- **Mismatched `exports` and `main`** — Bundlers may resolve `main` (legacy) and miss the conditional `exports`. Set both.
-- **Putting React JSX in a non-React template** — switch to `react-library.json` tsconfig, or strip the JSX.
-- **Adding the package's runtime deps to `devDependencies`** — they need to be `dependencies` so consumers actually install them.
-- **Naming it `@cdlab996/<name>-utils` or `@cdlab996/<name>-lib`** — the suffix is noise. Use the bare name (`@cdlab996/<name>`).
+- Missing `build` script — `pnpm prepare` skips the package, consumers fail to resolve.
+- Mismatched `exports` and `main` — bundlers may pick the legacy `main` and miss conditional exports. Set both consistently.
+- Runtime deps in `devDependencies` — consumers won't install them.
+- Suffixed names like `@cdlab996/<name>-utils` — drop the suffix, use the bare `@cdlab996/<name>`.

@@ -117,8 +117,7 @@ Use the same level of detail as neighboring sections — terse, architectural, n
 
 ## Common pitfalls
 
-- **Forgetting `nsl run` in dev script** — the app starts on a random port and the user has to chase it. Always `nsl run <tool> dev`.
-- **Pinning a dep version that's already in the catalog** — causes silent drift. If `pnpm-workspace.yaml` lists a version, use `catalog:prod` / `catalog:dev`.
-- **Adding `output: 'export'` and route handlers in the same Next app** — incompatible. Pick one.
-- **Forgetting the `repository.directory` field** — break the GitHub "View file" links from npm metadata.
-- **Skipping the `biome.json` override for a new React app** — Next.js / React rules silently don't apply.
+- Bare `next dev` / `wrangler dev` instead of `nsl run …` — the app starts on a random port instead of `http://<name>.localhost:3355`.
+- `output: 'export'` + server route handlers in the same Next app — incompatible.
+- New React app without a `biome.json` `next/react` override — domain rules silently don't apply.
+- Pinning a literal version for a dep that's already in the catalog — drift.

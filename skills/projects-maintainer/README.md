@@ -1,6 +1,8 @@
 # projects-maintainer
 
-A Claude Code skill for continuously maintaining a personal Turborepo + pnpm monorepo in the **cdlab projects** style. It bundles flow-oriented playbooks (six common maintenance tasks) plus minimal scaffolding templates so you can drop a new app or package into any monorepo without re-deriving conventions from scratch.
+Personal maintenance skill for [`@cdlab996/projects-monorepo`](https://github.com/WuChenDi/projects). Bundles flow-oriented playbooks + scaffolding templates so day-to-day work in the repo (or in a new repo cloning this style) lands consistently without re-deriving conventions every time.
+
+Not designed to be a generic monorepo helper. Everything is anchored to the actual apps in the repo (baccarat, byplay-log, dropply-api/web, flox, SecureC, shortener, …).
 
 ## What it covers
 
@@ -18,23 +20,25 @@ The shared technical baseline (`stack.md`, `conventions.md`) is loaded only when
 
 ## Stack baked in
 
+The cdlab projects baseline:
+
 - pnpm workspaces with two catalogs (`prod`, `dev`)
 - Turborepo with concurrency 50
 - Biome (single quotes, no semicolons, `useImportType` separated, `noFloatingPromises`, `noTsIgnore`, zod `import * as z`)
 - `@nsio/nsl` dev proxy (`http://<name>.localhost:3355`)
 - Cloudflare Pages / Workers / D1 + Drizzle (`DB_TYPE=libsql|d1`)
-- Next.js (App Router), Hono Workers, Nuxt 4
-- `next-intl` (`en`/`zh`) when an app needs i18n
-- Conventional Commits
+- Next.js (App Router) for browser apps, Hono for Workers, Nuxt 4 for the dashboard
+- `next-intl` (`en`/`zh`) by default
+- Conventional Commits, English remote-visible metadata
 
 ## Install
 
 ```bash
-# from this skills repo
 claude --plugin-dir ./skills/projects-maintainer
 ```
 
-After loading, the skill triggers on phrases like:
+Triggers automatically when you say things like:
+
 - "新建一个 worker / 加个 next 应用"
 - "bump catalog / 升级依赖 / wrangler compatibility_date"
 - "把这段逻辑下沉到 packages/utils"

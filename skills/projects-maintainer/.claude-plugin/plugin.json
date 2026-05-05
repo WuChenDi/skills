@@ -1,6 +1,6 @@
 {
   "name": "projects-maintainer",
-  "description": "Maintain a personal Turborepo + pnpm monorepo (cdlab style): scaffold new apps/packages, upgrade catalog deps, refactor, review code, and keep docs in sync.",
+  "description": "Personal maintenance skill for the cdlab projects monorepo (and any new repo cloning that style): scaffold apps/packages, bump catalog deps, refactor, review, sync docs.",
   "author": {
     "name": "wudi"
   }

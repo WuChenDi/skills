@@ -167,8 +167,7 @@ Don't write the whole 300-line doc at once. Start with the skeleton + one app, a
 
 ## Common pitfalls
 
-- **Bullet point bloat** — when a section grows past ~10 lines per app, you're writing a tutorial, not architecture notes. Trim.
-- **Updating English README, forgetting Chinese** — pair them every time.
-- **Promising features that aren't shipped** — the README describes what *exists*, not what's planned.
-- **Restating the code in prose** — the value of CLAUDE.md is everything the code can't say. If the section is just a paraphrase of `package.json`, delete it.
-- **Letting old gotchas linger after the bug is fixed** — if you fix the underlying issue, also delete the "Bug-fixed quirk" note.
+- Editing `README.md` without `README.zh-CN.md` (or vice versa) — pair them.
+- Restating what the code already says — CLAUDE.md is for what code can't show: rationale, constraints, gotchas.
+- Leaving "Bug-fixed quirk" notes after the underlying bug is fixed — delete them when the workaround goes away.
+- README sections describing planned features — README is shipped state only.

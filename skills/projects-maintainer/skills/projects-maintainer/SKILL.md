@@ -1,17 +1,17 @@
 ---
 name: projects-maintainer
-description: Use this skill whenever the user is maintaining or evolving a personal Turborepo + pnpm monorepo in the cdlab projects style. It triggers on intents like scaffolding a new app or shared package (Next.js / Cloudflare Workers + Hono / Nuxt 4), bumping pnpm catalog dependencies or wrangler compatibility_date, refactoring shared logic into packages, adding a feature to an existing app while honoring the project's Biome rules and conventions, reviewing local changes before commit/PR, or updating CLAUDE.md / README to match recent changes. Trigger even when the user does not name the skill explicitly — phrases like "新建一个 worker", "升级 catalog", "下沉到 utils", "提 PR 前自检", or "更新文档" are all in scope. Skip only for one-off scripts or unrelated codebases.
+description: Personal maintenance skill for the cdlab projects-monorepo (https://github.com/WuChenDi/projects). Trigger when working in that repo — or a new repo that clones its style — and the user wants to scaffold a new app/package (Next.js / Cloudflare Workers + Hono / Nuxt 4), bump pnpm catalog or wrangler compatibility_date, sink logic into packages/, add a feature to an existing app, self-review before commit/PR, or sync CLAUDE.md / README. Phrases like "新建一个 worker", "升级 catalog", "下沉到 utils", "提 PR 前自检", "更新文档" all in scope. Skip for one-off scripts or unrelated codebases.
 metadata:
   author: wudi
-  version: "1.0.0"
+  version: "1.1.0"
   source: https://github.com/WuChenDi/skills
 ---
 
 # projects-maintainer
 
-You are maintaining a personal Turborepo + pnpm monorepo in the **cdlab projects** style. This skill bundles flow-oriented playbooks (six common maintenance tasks) plus minimal scaffolding templates so contributions stay consistent — even in a fresh sub-project that has no `CLAUDE.md` yet.
+Maintenance skill for the cdlab projects-monorepo. Anchored to the real apps in the repo — `baccarat`, `byplay-log`, `dropply-api/web`, `flox`, `SecureC`, `shortener`, etc. — so guidance points at concrete reference implementations instead of inventing abstract patterns.
 
-This file (the SKILL body) is the **router and style cheatsheet**. Detailed steps live in `references/*.md` and templates in `assets/`. Read those *only when the relevant intent fires* — most edits don't need them.
+This file is the **router and style cheatsheet**. Detailed steps live in `references/*.md`, templates in `assets/`. Read those *only when the relevant intent fires*.
 
 ## Step 1 — Identify intent and route
 
@@ -85,11 +85,13 @@ These rules apply to **every** edit unless the project's `CLAUDE.md` says otherw
 
 ### Workers (Hono)
 
-- Standard middleware order: `accesslog → prettyJSON → requestId → cors`.
-- `src/global.ts` sets `globalThis.logger` and `globalThis.isDebug`; import for side effects from `src/index.ts` (`import './global'`).
-- API error envelope: `{ statusCode, message, stack? }` (`stack` only when `isDebug`). 404 returns the same shape.
-- One Hono app per worker; routes split into `src/routes/<group>.ts` and composed via `src/routes/index.ts`.
-- `wrangler.jsonc` `compatibility_date` is bumped per quarter (see `deps-upgrade.md`).
+Reference impl: `byplay-log/src/index.ts` (canonical minimal Worker). For more complex setups: `dropply-api` (full middleware + Drizzle + cron + email), `shortener` (KV + AI + analytics), `live-user`/`baccarat` (Durable Objects).
+
+- Middleware order: `accesslog → prettyJSON → requestId → cors`. Copy from `byplay-log`.
+- `src/global.ts` sets `globalThis.logger` and `globalThis.isDebug`; side-effect import in `src/index.ts` (`import './global'`).
+- Error envelope: `{ statusCode, message, stack? }` (`stack` only when `isDebug`). Same shape from 404.
+- Routes: one `src/routes/<group>.ts` per group, composed via `src/routes/index.ts`.
+- `wrangler.jsonc` `compatibility_date` bumped per quarter — see `deps-upgrade.md`.
 
 ### Drizzle (when a Worker uses a DB)
 
@@ -122,6 +124,6 @@ When a change is **architecturally meaningful** — new app, new shared package,
 
 ## Notes
 
-- **No CLAUDE.md yet?** Use this skill's `Style cheatsheet` and templates as the source of truth, and offer to seed a starter `CLAUDE.md` after the first scaffold.
-- **Templates are minimal on purpose.** They give you the wiring (package.json, tsconfig, configs) so the app boots; feature code is up to you. Copy a template, then trim or extend.
-- **Don't over-engineer.** If the user asks for "a tiny worker", don't bring in Drizzle / global logger / soft-delete tables. Keep the surface area tight; add things only when they earn their keep.
+- **No CLAUDE.md in a fresh sub-repo?** Use this skill's cheatsheet and templates as the source of truth; offer to seed a starter `CLAUDE.md` after the first scaffold.
+- **Templates are minimal on purpose.** They give wiring (package.json, tsconfig, configs) so the app boots — feature code is up to you. Copy, then trim or extend.
+- **Don't over-engineer.** A tiny worker doesn't need Drizzle / global logger / soft-delete. Add scaffolding only when it earns its keep.

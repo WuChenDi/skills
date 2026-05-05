@@ -30,11 +30,18 @@ If any answer is "no", abort and tell the user why.
 
 ### A2 — Pick the home
 
-`packages/utils/src/` is organized by capability:
+`packages/utils/src/` is organized by capability — current folders:
 
-- `clipboard/`, `download/`, `format/`, `idb-store/`, `logger/`, `np/` (numerical-precision math)
+- `clipboard/` — copy-to-clipboard
+- `download/` — `downloadFile` (single Blob/URL) and `downloadFilesAsZip` (batch ZIP via dynamic `jszip`); ZIP naming convention `{prefix}_yyyyMMdd_HHmmss.zip`
+- `format/` — formatting utilities
+- `idb-store/` — IndexedDB-backed key/value store
+- `logger/` — browser-side logger
+- `np/` — numerical-precision math
 
-Reuse an existing folder when the new helper fits one. Add a new folder only when the capability is genuinely new (e.g. `cache/`, `cron/`).
+Reuse an existing folder when the new helper fits one. Add a new folder only for a genuinely new capability (e.g. `cache/`, `cron/`).
+
+Recent extraction precedent: the `download` folder consolidated logic that used to live separately in `bycut`, `clearify`, `dropply-web`, `vidl`. See `refactor(utils): extract shared download utilities` (commit `44bcadd`) for the shape of that move.
 
 ### A3 — Move and re-export
 
@@ -123,9 +130,9 @@ Body explains *why*. The diff should be ~99% renames + import path edits. If you
 
 ### C1 — Confirm it fits the package's style
 
-`packages/ui` is a no-build, source-only library. Components are shadcn/ui-flavored: primitive, unopinionated, take all data via props, no app-specific imports.
+`packages/ui` is a no-build, source-only library. Components are shadcn/ui-flavored: primitive, unopinionated, take all data via props, no app-specific imports. Reference: the existing `packages/ui/src/components/*` (Button, Card, Tabs, Tooltip, DropdownMenu, etc.) and the `IK*` and `reactbits/*` curated sets.
 
-If the component pulls from an app's Zustand store or makes API calls, it doesn't belong here yet — split the presentational layer out first, then sink only the dumb part.
+If the component pulls from an app's Zustand store or makes API calls, it doesn't belong here yet — split the presentational layer out first, then sink only the dumb part. Recent precedent: `refactor(ui): migrate asset components to shared library` (commit `8cd269a`).
 
 ### C2 — Move to the right subpath
 
@@ -178,8 +185,6 @@ When in doubt, point the user at the duplication, name the cost (X files touched
 
 ## Common pitfalls
 
-- **Refactoring + adding a feature in the same commit** — split them. Always.
-- **Sinking a "helper" that depends on the consuming app's logger or config** — pass deps in, or keep the helper local.
-- **Forgetting to rebuild `packages/utils`** — consumers pull stale `dist/` and you waste 20 minutes diagnosing.
-- **Moving a file but missing the test next to it** — orphan test file, CI fails on the next run.
-- **Using `git mv` then forgetting to update import paths** — typecheck catches this, but only if you run it.
+- Refactor + feature in the same commit — split.
+- Sinking a helper that depends on the caller's logger / config — pass deps in, or keep it local.
+- Forgetting to rebuild `packages/utils` after editing — consumers pull stale `dist/`.

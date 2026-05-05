@@ -1,18 +1,18 @@
 {
   "name": "projects-maintainer",
-  "description": "Skill for continuously maintaining a personal Turborepo + pnpm monorepo (cdlab projects style)",
+  "description": "Personal skill for maintaining the cdlab projects monorepo",
   "owner": {
     "name": "wudi"
   },
   "metadata": {
-    "description": "Playbooks + templates for scaffolding new apps/packages, bumping pnpm catalog deps, cross-app refactors, code review, and documentation sync — all aligned with the cdlab projects-monorepo conventions (Biome, nsl, Cloudflare Workers, Drizzle, next-intl).",
-    "version": "1.0.0"
+    "description": "Playbooks + templates tuned to the cdlab projects-monorepo (https://github.com/WuChenDi/projects): scaffolding new apps/packages, bumping pnpm catalog deps, cross-app refactors, code review, and documentation sync — anchored to the existing apps' conventions (baccarat DO, byplay-log/dropply-api Hono middleware, shortener KV invalidation, SecureC/flox Next.js layout).",
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "projects-maintainer",
       "source": "./",
-      "description": "Use to scaffold, upgrade, refactor, review, or document any project in the cdlab projects-monorepo style."
+      "description": "Use to scaffold, upgrade, refactor, review, or document any project in the cdlab projects-monorepo."
     }
   ]
 }
