@@ -12,14 +12,28 @@ Each skill is packaged as a standalone plugin with:
 
 Most convenient way — use the `skills` CLI (open agent skills standard):
 
+### Global (all projects)
+
 ```bash
-# Install all skills from this repo
+# Install all skills globally
+npx skills add wuchendi/skills --global
+
+# Install a specific skill globally
+npx skills add wuchendi/skills --skill cdlab-projects --global
+npx skills add wuchendi/skills --skill explain-words --global
+```
+
+### Project (current project only)
+
+```bash
+# Install all skills to current project
 npx skills add wuchendi/skills
 
-# Install a specific skill
+# Install a specific skill to current project
+npx skills add wuchendi/skills --skill cdlab-projects
 npx skills add wuchendi/skills --skill explain-words
 
-# List available skills in this repo
+# List available skills
 npx skills add wuchendi/skills --list
 ```
 
