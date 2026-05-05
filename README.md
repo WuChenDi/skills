@@ -41,6 +41,7 @@ After loading, skills appear with **namespace prefix**:
 | Skill              | Description                                      | Invocation example                        |
 |--------------------|--------------------------------------------------|--------------------------------------------|
 | [explain-words](skills/explain-words/) | Explain English words with etymology, examples, usage cards (HTML render support) | `/explain-words:explain-words serendipity` |
+| [projects-maintainer](skills/projects-maintainer/) | Maintain a personal Turborepo + pnpm monorepo: scaffold apps/packages, bump catalog deps, refactor, review code, sync docs | "新建一个 worker / 升级 catalog / 帮我自检一下" |
 
 ## Directory Structure (example)
 
