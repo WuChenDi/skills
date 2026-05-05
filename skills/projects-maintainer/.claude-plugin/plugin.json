@@ -1,0 +1,7 @@
+{
+  "name": "projects-maintainer",
+  "description": "Maintain a personal Turborepo + pnpm monorepo (cdlab style): scaffold new apps/packages, upgrade catalog deps, refactor, review code, and keep docs in sync.",
+  "author": {
+    "name": "wudi"
+  }
+}

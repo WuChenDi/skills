@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "__APP_NAME__",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-05-04",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "DEPLOY_RUNTIME": "cf",
+    "DB_TYPE": "d1",
+    "LIBSQL_URL": "your-libsql-database-url",
+    "LIBSQL_AUTH_TOKEN": "your-libsql-auth-token",
+    "CLOUDFLARE_ACCOUNT_ID": "your-cloudflare-account-id",
+    "CLOUDFLARE_API_TOKEN": "your-cloudflare-api-token"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "__DB_NAME__",
+      "migrations_dir": "./src/database",
+      "database_id": "your-d1-database-id"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "@cdlab996/__APP_NAME__",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "__APP_DESCRIPTION__",
+  "author": "wudi <wuchendi96@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/WuChenDi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WuChenDi/projects.git",
+    "directory": "apps/__APP_NAME__"
+  },
+  "scripts": {
+    "dev": "nsl run wrangler dev src/index.ts",
+    "deploy": "wrangler deploy --minify",
+    "build": "bun build src/index.ts --outdir dist --target browser",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "cf:localdb": "wrangler d1 migrations apply __DB_NAME__",
+    "cf:remotedb": "wrangler d1 migrations apply __DB_NAME__ --remote",
+    "db:studio": "drizzle-kit studio --port 3020 --host 0.0.0.0",
+    "db:pull": "drizzle-kit pull",
+    "db:push": "drizzle-kit push",
+    "db:gen": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:up": "drizzle-kit up"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "catalog:prod",
+    "@libsql/client": "catalog:prod",
+    "drizzle-orm": "catalog:prod",
+    "hono": "catalog:prod",
+    "winston": "catalog:prod",
+    "winston-daily-rotate-file": "catalog:prod",
+    "zod": "catalog:prod"
+  },
+  "devDependencies": {
+    "@cdlab996/tsconfig": "workspace:*",
+    "@cloudflare/workers-types": "catalog:dev",
+    "@types/node": "catalog:dev",
+    "drizzle-kit": "catalog:dev",
+    "wrangler": "catalog:dev"
+  }
+}

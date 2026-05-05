@@ -1,0 +1,34 @@
+{
+  "theme": {
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "label": "Switch language"
+  },
+  "header": {
+    "title": "__APP_TITLE__",
+    "more": "more"
+  },
+  "footer": {
+    "copyright": "Copyright © 2025-PRESENT"
+  },
+  "home": {
+    "title": "__APP_TITLE__",
+    "description": "__APP_DESCRIPTION__"
+  },
+  "error": {
+    "title": "Oh no!",
+    "description": "There was an issue. This could be a temporary problem, please try your action again.",
+    "tryAgain": "Try Again"
+  },
+  "notFound": {
+    "title": "Something's missing",
+    "description": "Sorry, the page you are looking for doesn't exist or has been moved.",
+    "goBack": "Go back",
+    "backToHome": "Back to Home"
+  },
+  "seo": {
+    "title": "__APP_TITLE__",
+    "description": "__APP_DESCRIPTION__"
+  }
+}
