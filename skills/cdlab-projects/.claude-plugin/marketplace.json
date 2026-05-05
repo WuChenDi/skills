@@ -1,5 +1,5 @@
 {
-  "name": "projects-maintainer",
+  "name": "cdlab-projects",
   "description": "Personal skill for maintaining the cdlab projects monorepo",
   "owner": {
     "name": "wudi"
@@ -10,7 +10,7 @@
   },
   "plugins": [
     {
-      "name": "projects-maintainer",
+      "name": "cdlab-projects",
       "source": "./",
       "description": "Use to scaffold, upgrade, refactor, review, or document any project in the cdlab projects-monorepo."
     }

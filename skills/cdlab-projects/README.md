@@ -1,4 +1,4 @@
-# projects-maintainer
+# cdlab-projects
 
 Personal maintenance skill for [`@cdlab996/projects-monorepo`](https://github.com/WuChenDi/projects). Bundles flow-oriented playbooks + scaffolding templates so day-to-day work in the repo (or in a new repo cloning this style) lands consistently without re-deriving conventions every time.
 
@@ -34,7 +34,7 @@ The cdlab projects baseline:
 ## Install
 
 ```bash
-claude --plugin-dir ./skills/projects-maintainer
+claude --plugin-dir ./skills/cdlab-projects
 ```
 
 Triggers automatically when you say things like:
@@ -48,10 +48,10 @@ Triggers automatically when you say things like:
 ## Directory layout
 
 ```
-projects-maintainer/
+cdlab-projects/
 ├── .claude-plugin/plugin.json
 ├── README.md
-└── skills/projects-maintainer/
+└── skills/cdlab-projects/
     ├── SKILL.md               # router + style cheatsheet
     ├── references/            # detailed playbooks (loaded on demand)
     └── assets/
