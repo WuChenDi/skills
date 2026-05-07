@@ -3,7 +3,7 @@ name: explain-words
 description: A deep-dive word mastery tool that deconstructs English words into etymology, semantics, nuance, and visual topology, generating a museum-quality HTML card.
 metadata:
   author: wudi
-  version: "2026.2.10"
+  version: "2026.02.10"
   source: scripts located at https://github.com/WuChenDi/skills
 ---
 

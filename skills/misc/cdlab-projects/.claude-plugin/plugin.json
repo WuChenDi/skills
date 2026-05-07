@@ -1,5 +1,6 @@
 {
   "name": "cdlab-projects",
+  "version": "2026.05.07",
   "description": "Personal maintenance skill for the cdlab projects monorepo (and any new repo cloning that style): scaffold apps/packages, bump catalog deps, refactor, review, sync docs.",
   "author": {
     "name": "wudi"

@@ -36,6 +36,18 @@ skills/<category>/<plugin>/
 3. The `SKILL.md` frontmatter `description` is the trigger contract — it must describe **when to fire** in concrete phrases the user is likely to say. Vague descriptions are the #1 reason a skill never gets used.
 4. Keep `metadata.author`, `metadata.version`, `metadata.source` filled in.
 
+## Versioning
+
+**CalVer `YYYY.MM.DD`** (zero-padded). Skills are content, not stable APIs — date-based versions are honest about that and let users see freshness at a glance. Do not use SemVer.
+
+When you change a skill, bump the date in **all three** places so they stay in sync:
+
+- `skills/<category>/<plugin>/.claude-plugin/plugin.json` → `version`
+- `skills/<category>/<plugin>/.claude-plugin/marketplace.json` → `metadata.version` (if present)
+- `skills/<category>/<plugin>/skills/<skill>/SKILL.md` → frontmatter `metadata.version`
+
+Multiple edits the same day reuse the same date — no suffix needed.
+
 ## Verifying changes
 
 - `bash scripts/list-skills.sh` — should list every `SKILL.md`. If a skill is missing, the path or filename is wrong.

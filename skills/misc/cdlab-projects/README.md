@@ -34,7 +34,7 @@ The cdlab projects baseline:
 ## Install
 
 ```bash
-claude --plugin-dir ./skills/cdlab-projects
+claude --plugin-dir ./skills/misc/cdlab-projects
 ```
 
 Triggers automatically when you say things like:

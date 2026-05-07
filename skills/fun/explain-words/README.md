@@ -18,7 +18,7 @@
 在本仓库根目录执行：
 
 ```bash
-claude --plugin-dir ./skills/explain-words
+claude --plugin-dir ./skills/fun/explain-words
 ```
 
 然后在 Claude Code 中调用（插件技能会被命名空间前缀化）：
@@ -73,10 +73,10 @@ word_card_{Word}.html
 
 ## 自定义与开发
 
-- **改样式/布局**：编辑 `skills/explain-words/skills/explain-words/assets/word_card.html`
-- **改输出结构**：编辑 `skills/explain-words/skills/explain-words/SKILL.md`
+- **改样式/布局**：编辑 `skills/fun/explain-words/skills/explain-words/assets/word_card.html`
+- **改输出结构**：编辑 `skills/fun/explain-words/skills/explain-words/SKILL.md`
 - **版本信息**：
-  - `SKILL.md` 的 `metadata.version`（当前为 `2026.2.10`）
+  - `SKILL.md` 的 `metadata.version`（当前为 `2026.02.10`）
   - `.claude-plugin/plugin.json`（可选：建议补充 `version/license/repository` 等字段以便分发）
 
 ## 注意事项

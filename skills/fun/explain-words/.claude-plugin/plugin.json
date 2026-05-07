@@ -1,5 +1,6 @@
 {
   "name": "explain-words",
+  "version": "2026.02.10",
   "description": "Word Soul Master — deconstructs English words into etymology, core semantics, nuance spectrum, and visual topology. Generates Museum Quality HTML cards.",
   "author": {
     "name": "wudi"

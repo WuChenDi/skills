@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A deep-dive word mastery tool that deconstructs English words into etymology, semantics, nuance, and visual topology, generating a museum-quality HTML card.",
-    "version": "1.0.0"
+    "version": "2026.02.10"
   },
   "plugins": [
     {

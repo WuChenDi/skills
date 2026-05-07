@@ -3,7 +3,7 @@ name: cdlab-projects
 description: Personal maintenance skill for the cdlab projects-monorepo (https://github.com/WuChenDi/projects). Trigger when working in that repo — or a new repo that clones its style — and the user wants to scaffold a new app/package (Next.js / Cloudflare Workers + Hono / Nuxt 4), bump pnpm catalog or wrangler compatibility_date, sink logic into packages/, add a feature to an existing app, self-review before commit/PR, or sync CLAUDE.md / README. Phrases like "新建一个 worker", "升级 catalog", "下沉到 utils", "提 PR 前自检", "更新文档" all in scope. Skip for one-off scripts or unrelated codebases.
 metadata:
   author: wudi
-  version: "1.1.0"
+  version: "2026.05.07"
   source: https://github.com/WuChenDi/skills
 ---
 
