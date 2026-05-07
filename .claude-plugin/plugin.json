@@ -1,7 +1,7 @@
 {
   "name": "wuchendi-skills",
   "skills": [
-    "./skills/cdlab-projects",
-    "./skills/explain-words"
+    "./skills/misc/cdlab-projects",
+    "./skills/fun/explain-words"
   ]
 }
