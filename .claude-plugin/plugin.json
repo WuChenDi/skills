@@ -1,6 +1,8 @@
 {
   "name": "wuchendi-skills",
   "skills": [
+    "./skills/engineering/pre-pr-review",
+    "./skills/engineering/refactor-extract",
     "./skills/misc/cdlab-projects",
     "./skills/fun/explain-words"
   ]

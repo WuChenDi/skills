@@ -1,0 +1,18 @@
+{
+  "name": "refactor-extract",
+  "description": "Extract-shared-logic refactor skill",
+  "owner": {
+    "name": "wudi"
+  },
+  "metadata": {
+    "description": "Disciplined extraction of duplicated logic into a shared module: confirm worth extracting (≥2 callers, no caller-specific state), decide the shape, two-commit pattern (extract + migrate), verify per consumer. Stack-agnostic.",
+    "version": "2026.05.07"
+  },
+  "plugins": [
+    {
+      "name": "refactor-extract",
+      "source": "./",
+      "description": "Use when the user wants to DRY up duplicated code by sinking it into a shared module."
+    }
+  ]
+}

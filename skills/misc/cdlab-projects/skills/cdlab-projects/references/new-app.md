@@ -6,7 +6,7 @@ Use this when the user wants to add a new app to `apps/`.
 
 Ask one short question if the user hasn't said:
 
-> "这个 app 是 Next.js（前端 / 静态导出）、Cloudflare Worker（API / 后端）、还是 Nuxt（内容 / 仪表盘）？"
+> "Is this a Next.js app (frontend / static export), a Cloudflare Worker (API / backend), or a Nuxt app (content / dashboard)?"
 
 Each variant has its own template under `assets/templates/`:
 
@@ -16,7 +16,7 @@ Each variant has its own template under `assets/templates/`:
 | `worker-app` | HTTP API, webhook, scheduled job, Durable Object, anything that runs on Cloudflare Workers   | `assets/templates/worker-app` |
 | `nuxt-app`   | Content / dashboard with SSR/ISR, deploys to Vercel                                          | `assets/templates/nuxt-app`   |
 
-If the user is uncertain, ask one clarifying question (e.g. "需要服务端 API 吗？" or "需要 SSR 吗？"). Don't guess.
+If the user is uncertain, ask one clarifying question (e.g. "Does it need a server-side API?" or "Does it need SSR?"). Don't guess.
 
 ## Step 1 — Confirm naming
 
@@ -27,7 +27,7 @@ Decide the app name early; everything depends on it.
 - **Dev URL**: `http://<app-name>.localhost:3355` (set automatically by `nsl`).
 - **Worker name** (CF Workers only): same as the directory; lives in `wrangler.jsonc` `name` field.
 
-Confirm with the user in one line: "目录 / 包名都用 `<name>`，对吧？"
+Confirm with the user in one line: "Use `<name>` for both the directory and the workspace package name, right?"
 
 ## Step 2 — Copy and rename
 

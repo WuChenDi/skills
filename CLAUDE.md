@@ -55,7 +55,8 @@ Multiple edits the same day reuse the same date — no suffix needed.
 
 ## Style
 
-- **English only** for everything that ships: `SKILL.md`, `references/*.md`, plugin metadata, commit messages, PR text. Trigger phrases inside a `description` may include Chinese only when the skill is explicitly project-specific and the project's users speak Chinese (e.g. `cdlab-projects`).
+- **English only** for everything that ships: `SKILL.md`, `references/*.md`, plugin metadata, commit messages, PR text. Claude routes skills semantically, so Chinese trigger phrases in a `description` add no real matching value over a clear English description — don't include them. Exception: locale-specific scaffolding files (e.g. `messages/zh.json`, native language names in a language selector) must stay in their native language since that *is* their purpose.
+- The `fun/` category is exempt from the English rule — those skills can be in whatever language fits their output.
 - No emojis in skill content unless the skill is generating user-facing output (e.g. `explain-words` cards).
 - No mentions of AI tooling vendors (Claude / Anthropic / OpenAI / etc.) in commit messages or PR text.
 

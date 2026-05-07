@@ -1,21 +1,14 @@
-# Code Review Playbook
+# Code Review Playbook (cdlab layer)
 
-Use this before commit / before opening a PR — or when the user asks "帮我自检一下". The goal is to catch the things automated tools won't, and run the things they will.
+Pre-commit / pre-PR self-review for the cdlab `projects` monorepo. Use when the user asks for a self-review, sanity-check, or pre-PR pass on their own branch.
 
-## Step 1 — Pull the diff
+> **First**, run the generic methodology from the [`pre-pr-review`](https://github.com/WuChenDi/skills/tree/main/skills/engineering/pre-pr-review) skill — diff pull, surface-area scan, X-implies-Y missing-co-changes detection, green/yellow/red verdict format. **Then** apply the cdlab-specific layers below.
 
-```bash
-git status
-git diff                    # working tree
-git diff --staged           # staged
-git diff main...HEAD        # whole branch since branching off main
-```
+This file only documents what's specific to this monorepo. The generic logic lives in `pre-pr-review`.
 
-Read the diff before touching any tool. A 200-line diff from a 1-line task is usually a hint of scope creep — call it out.
+## cdlab-specific automated layer
 
-## Step 2 — Run the automated layer
-
-In this order; stop on first hard failure and fix the root cause:
+Run in this order; stop on first hard failure and fix the root cause:
 
 ```bash
 pnpm lint:biome                                          # root, full repo
@@ -25,100 +18,59 @@ pnpm --filter @cdlab996/<changed-pkg-or-app> test        # if tests exist
 pnpm --filter @cdlab996/<changed-pkg-or-app> build       # final smoke
 ```
 
-For multiple packages, repeat per filter — Turbo will skip unaffected ones, so it's cheap.
+Turbo skips unaffected packages, so multi-filter runs are cheap.
 
-If any lint rule fails, **fix the code, not the rule**. Don't add `// biome-ignore` lines unless there's a genuine reason (and write the reason in the comment).
+If a Biome rule fails, **fix the code, not the rule**. Don't add `// biome-ignore` lines unless there's a genuine reason (and write the reason in the comment).
 
-## Step 3 — Read the diff with the conventions checklist
+## cdlab-specific style checks
 
-Walk through the diff and check, mentally:
+Eyeball these in the diff (Biome catches most, not all):
 
-### Style
-
-- [ ] Single quotes, no semicolons, 2-space indent — Biome will catch most, but eyeball anyway.
+- [ ] Single quotes, no semicolons, 2-space indent.
 - [ ] `import type { … }` separated, never `import { type … }`.
-- [ ] `import * as z from 'zod'` (if the file uses zod).
+- [ ] `import * as z from 'zod'` (if the file uses zod) — `import { z }` will fail.
 - [ ] No `// @ts-ignore` — only `// @ts-expect-error <reason>`.
 - [ ] No `delete obj.prop`. No `new Date().getTime()`.
 - [ ] Every async call is awaited or `void`-ed.
 
-### Dependencies
+## cdlab-specific dependency checks
 
-- [ ] No new literal version pin for a dep that already lives in the catalog.
+- [ ] No new literal version pin for a dep that already lives in the catalog (`pnpm-workspace.yaml`).
 - [ ] If a dep is added to one app's `package.json`, would another app likely want it too? If yes, promote to catalog now.
-- [ ] Cross-package import uses `workspace:*`, not a literal version.
+- [ ] Cross-package import uses `"@cdlab996/<name>": "workspace:*"`, not a literal version.
 - [ ] If a `packages/*` library was edited, was it rebuilt? (`pnpm prepare` or per-package `build`.)
 
-### Architecture
+## cdlab-specific architecture checks
 
-- [ ] New code lives in the right layer (Workers: routes / lib / cron; Next: components / stores / lib).
-- [ ] No app-specific logic leaked into `packages/utils` or `packages/ui` (they should stay app-agnostic).
+- [ ] New code lives in the right layer (Workers: `src/routes/` `src/lib/` `src/cron/`; Next: `src/components/<feature>/` `src/stores/<feature>-store.ts` `src/lib/`).
+- [ ] No app-specific logic leaked into `packages/utils` or `packages/ui` (they stay app-agnostic).
 - [ ] No duplicated helper that already exists in `@cdlab996/utils` / `@cdlab996/ui`.
-- [ ] If a Worker touches the DB: filtered by `isDeleted = false`, no `db.delete()`, soft-delete on writes.
-- [ ] If a Next app uses i18n: every new string has keys in both `en.json` and `zh.json`.
-- [ ] New env vars are declared in `wrangler.jsonc` `vars` (with placeholder), `.env.example`, and `src/types.ts` if the app has a typed `createConfig`.
+- [ ] If a Worker touches the DB: filtered by `eq(table.isDeleted, false)`. **Never** `db.delete()` — soft-delete on writes.
+- [ ] If a Next app uses i18n (next-intl): every new string has keys in **both** `messages/en.json` and `messages/zh.json`.
+- [ ] New env vars declared in `wrangler.jsonc` `vars` (with placeholder), `.env.example`, and `src/types.ts` if the app has a typed `createConfig`.
 
-### Tests
+## cdlab-specific X-implies-Y patterns
 
-- [ ] If the change is non-trivial logic in a `packages/*` library — is there a test?
-- [ ] If the change touches a Worker's request flow — is there a smoke curl in your verification log?
-- [ ] If the change is UI — did you actually load the page once?
+When walking the Step 4 missing-co-changes scan from `pre-pr-review`, check these cdlab-specific pairs:
 
-### Commits
+- New app added → `biome.json` `overrides` updated? Otherwise Biome silently skips lint domain rules for that app.
+- New i18n string in `en.json` → mirror in `zh.json`? (Or vice versa — broken locale at runtime if missing.)
+- New deps in `package.json` → actually used somewhere? Bloat otherwise.
+- Drizzle schema edited → `pnpm db:gen` run? Migration missing → prod will crash.
+- New Worker route file → registered in `src/routes/index.ts`? 404 in prod otherwise.
+- New CF binding (KV / D1 / AI / DO) added in code → declared in `wrangler.jsonc`? Runtime error otherwise.
+- Significant architectural change → `CLAUDE.md` updated? Drift starts here.
 
-- [ ] Subject in Conventional Commits form (`feat`, `fix`, `chore`, `refactor`, `docs`, `build`, `test`).
-- [ ] Scope (when meaningful) is the app or package: `feat(shortener): …`, `chore(deps): …`.
-- [ ] Subject is imperative, English, ≤ 72 chars.
-- [ ] No mention of AI assistants / model names / co-authored-by trailers.
+## cdlab-specific commit conventions
 
-### Surface area
+- Subject in **Conventional Commits** form (`feat`, `fix`, `chore`, `refactor`, `docs`, `build`, `test`).
+- Scope (when meaningful) is the app or package: `feat(shortener): …`, `chore(deps): …`.
+- Subject imperative, English, ≤ 72 chars.
+- **No mention of AI assistants / model names / `Co-authored-by` trailers** — git policy across this repo's history.
 
-- [ ] Every touched file traces back to the user's request. If a file changed for a reason you can't articulate in one sentence, revert that hunk.
-- [ ] No drive-by reformat of unrelated code.
-- [ ] No `console.log` left over (unless the file uses `console.*` deliberately for Worker logging).
-- [ ] No `.only`, `.skip`, `xit`, debugger statements left in tests.
+## cdlab-specific common pitfalls
 
-## Step 4 — Check what isn't in the diff but should be
-
-This is the thing automated tools won't catch:
-
-- New app added but `biome.json` `overrides` not updated → Biome silently skips lint domain rules.
-- New i18n strings added in `en.json` but not `zh.json` (or vice versa) → broken locale at runtime.
-- New deps in `package.json` but not used anywhere yet → bloat. Either use them or remove them before merge.
-- Drizzle schema edited but `pnpm db:gen` not run → migration missing, prod will crash.
-- Worker route added but not registered in `src/routes/index.ts` → 404 in prod.
-- New CF binding (KV/D1/AI) added in code but not in `wrangler.jsonc` → runtime error.
-- Significant architectural change but `CLAUDE.md` not updated → drift starts.
-
-For each, scan the diff one more time looking specifically for the missing piece.
-
-## Step 5 — Decide and report
-
-After all the above, give the user a compact verdict:
-
-```
-Verdict: green / yellow / red
-
-Green  — passes all checks, ready to commit.
-Yellow — passes automated checks, but: <1-2 specific concerns>.
-Red    — fix these before commit: <specific failures>.
-```
-
-Then either commit (if asked, and verdict ≥ green) or hand it back.
-
-## When the user asks for "review", not "self-review"
-
-If the user is asking you to review **someone else's** PR or branch (not their own work):
-
-- Lead with what's correct — reviewers who only list problems are exhausting.
-- Then list concerns, ranked by severity (correctness > design > style).
-- Be specific: file paths and line numbers, not vague "consider refactoring".
-- For style nitpicks that Biome would catch: don't bother — Biome will catch them. Focus your time on what Biome can't.
-- Don't ask "why did you do it this way?" rhetorically — either propose a concrete alternative, or accept that the choice was deliberate.
-
-## Common pitfalls
-
-- **Trusting a green typecheck** — typecheck doesn't catch missing migrations, missing i18n keys, missing wrangler bindings. Use the §4 checklist.
+- **Trusting a green typecheck** — typecheck doesn't catch missing migrations, missing i18n keys, missing wrangler bindings. The X-implies-Y scan above is exactly for these.
 - **Suppressing a Biome rule** to silence a single warning — usually the warning is right.
-- **Letting a "Major bump" sneak in via `pnpm install` mass-update** — read `pnpm-lock.yaml` diff for unexpected jumps.
-- **Stamping a commit message on top of unrelated staged changes** — `git diff --staged` before commit, every time.
+- **Letting a Major bump sneak in via `pnpm install` mass-update** — read `pnpm-lock.yaml` diff for unexpected jumps.
+- **Stamping a commit on top of unrelated staged changes** — `git diff --staged` before commit, every time.

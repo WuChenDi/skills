@@ -39,11 +39,11 @@ claude --plugin-dir ./skills/misc/cdlab-projects
 
 Triggers automatically when you say things like:
 
-- "新建一个 worker / 加个 next 应用"
-- "bump catalog / 升级依赖 / wrangler compatibility_date"
-- "把这段逻辑下沉到 packages/utils"
-- "提 PR 之前帮我自检 / 跑一下 lint"
-- "更新 CLAUDE.md"
+- "spin up a new worker / add a next app"
+- "bump catalog / upgrade deps / roll wrangler compatibility_date"
+- "sink this logic into packages/utils"
+- "self-review before I open a PR / run lint"
+- "update CLAUDE.md"
 
 ## Directory layout
 

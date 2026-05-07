@@ -17,7 +17,7 @@ Make a **new package** only when:
 - It has a sensible standalone semver story (you'd want to publish it, even if you don't actually publish to npm).
 - Bundling it into an existing package would force consumers to drag in unrelated dependencies.
 
-If unsure, ask the user once: "新建独立 package，还是加进 utils 一个子模块就够了？"
+If unsure, ask the user once: "Standalone package, or just a new submodule inside `utils`?"
 
 ## Step 1 — Pick a build profile
 
