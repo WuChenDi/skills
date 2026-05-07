@@ -1,0 +1,7 @@
+{
+  "name": "wuchendi-skills",
+  "skills": [
+    "./skills/cdlab-projects",
+    "./skills/explain-words"
+  ]
+}
