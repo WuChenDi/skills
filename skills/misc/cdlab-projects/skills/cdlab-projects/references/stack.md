@@ -34,7 +34,7 @@ The opinionated tech stack assumed by this skill. Read this when you need to kno
 ## Shared UI / utilities
 
 - **`@cdlab996/ui`** — React + Tailwind v4 component library. **No build step**; consumers import raw source via subpath exports (`@cdlab996/ui/components/<name>`, `@cdlab996/ui/hooks/<name>`, etc.). Adding a component just means dropping a `.tsx` into `src/components/`.
-- **`@cdlab996/utils`** — generic helpers (`clipboard`, `download`, `format`, `idb-store`, `logger`, `np`). Built with `tsdown`. Consumers import from `dist/index.mjs` and need a rebuild after edits (`pnpm --filter @cdlab996/utils build` or `dev --watch`).
+- **`@cdlab996/utils`** — generic helpers (`clipboard`, `download`, `format`, `idb-store`, `logger`, `np`, `password`). Built with `tsdown`. Consumers import from `dist/index.mjs` and need a rebuild after edits (`pnpm --filter @cdlab996/utils build` or `dev --watch`).
 - **`@cdlab996/cipher`** — XChaCha20-Poly1305 + Argon2id stream crypto. Used by encryption-heavy front-ends.
 - **`@cdlab996/uncrypto`** — runtime shim selecting Node `webcrypto` vs browser `crypto`. Two-file build (`crypto.node.ts`, `crypto.web.ts`) via tsdown.
 - **`@cdlab996/tsconfig`** — see above.

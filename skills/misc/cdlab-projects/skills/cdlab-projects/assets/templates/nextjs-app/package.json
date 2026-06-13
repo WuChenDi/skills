@@ -14,7 +14,7 @@
   },
   "scripts": {
     "dev": "nsl run next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "build:cf": "npx @cloudflare/next-on-pages@latest",
     "start": "next start",
     "lint": "next lint",
