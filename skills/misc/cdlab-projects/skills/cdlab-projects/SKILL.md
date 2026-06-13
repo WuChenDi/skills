@@ -89,7 +89,7 @@ Reference impl: `byplay-log/src/index.ts` (canonical minimal Worker). For more c
 
 - Middleware order: `accesslog → prettyJSON → requestId → cors`. Copy from `byplay-log`.
 - `src/global.ts` sets `globalThis.logger` and `globalThis.isDebug`; side-effect import in `src/index.ts` (`import './global'`).
-- Error envelope: `{ statusCode, message, stack? }` (`stack` only when `isDebug`). Same shape from 404.
+- Error envelope: `{ statusCode, message, stack? }` (`stack` only when `isDebug`); 404 is the same minus `stack`. Reference impl: `dropply-api/src/index.ts`. The field is **not** uniform across the fleet — `byplay-log` uses `code`, `shortener` emits both `code` + `statusCode` for legacy clients. Prefer `statusCode` for new Workers; only mirror `code` if a client depends on it.
 - Routes: one `src/routes/<group>.ts` per group, composed via `src/routes/index.ts`.
 - `wrangler.jsonc` `compatibility_date` bumped per quarter — see `deps-upgrade.md`.
 
