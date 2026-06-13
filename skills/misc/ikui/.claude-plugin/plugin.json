@@ -1,0 +1,8 @@
+{
+  "name": "ikui",
+  "version": "2026.06.13",
+  "description": "Find, install, and compose components and business blocks from the ikui registry (@ikui) — a shadcn-style copy-paste React library for media/timeline editing UI installed via the shadcn CLI.",
+  "author": {
+    "name": "wudi"
+  }
+}

@@ -47,6 +47,7 @@ Stack-agnostic methodology skills. Compose with project-specific skills.
 Project-specific or one-off tools — kept around but not generally applicable.
 
 - **[cdlab-projects](./skills/misc/cdlab-projects/skills/cdlab-projects/SKILL.md)** — Maintenance skill for the cdlab `projects` monorepo: scaffold apps/packages, bump pnpm catalog and wrangler compat dates, refactor across apps, run pre-commit/PR self-review, sync `CLAUDE.md` / README. Layers cdlab-specific conventions on top of `pre-pr-review` and `refactor-extract`.
+- **[ikui](./skills/misc/ikui/skills/ikui/SKILL.md)** — Find, install, and compose components and business blocks from the ikui registry (`@ikui`): a shadcn-style copy-paste React library for media/timeline editing UI (waveforms, thumbnail strips, timeline ruler/element/playhead, audio/video trimmers, image compare/crop). Installs via the shadcn CLI; pulls the live component manifest at load time.
 
 ### Fun
 
