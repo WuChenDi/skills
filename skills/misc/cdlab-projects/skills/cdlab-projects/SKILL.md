@@ -3,7 +3,7 @@ name: cdlab-projects
 description: Personal maintenance skill for the cdlab projects-monorepo (https://github.com/WuChenDi/projects). Trigger when working in that repo — or a new repo that clones its style — and the user wants to scaffold a new app/package (Next.js / Cloudflare Workers + Hono / Nuxt 4), bump pnpm catalog or wrangler compatibility_date, sink shared logic into packages/, add a feature to an existing app, self-review before commit/PR, or sync CLAUDE.md / README. Skip for one-off scripts or unrelated codebases.
 metadata:
   author: wudi
-  version: "2026.05.07"
+  version: "2026.06.13"
   source: https://github.com/WuChenDi/skills
 ---
 
@@ -74,7 +74,7 @@ These rules apply to **every** edit unless the project's `CLAUDE.md` says otherw
 
 ### Dev workflow
 
-- Dev URL is **always** `http://<app-name>.localhost:3355` via `@nsio/nsl`. Don't add port discovery code.
+- Dev URL is **always** `http://<app-name>.localhost:3355` via `@dotns/nsl`. Don't add port discovery code.
 - Each app's `dev` script is `nsl run <build-tool> dev` (e.g. `nsl run next dev`, `nsl run wrangler dev`, `nsl run nuxt dev`).
 
 ### i18n (when an app uses next-intl)

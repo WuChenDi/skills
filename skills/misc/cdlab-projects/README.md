@@ -25,7 +25,7 @@ The cdlab projects baseline:
 - pnpm workspaces with two catalogs (`prod`, `dev`)
 - Turborepo with concurrency 50
 - Biome (single quotes, no semicolons, `useImportType` separated, `noFloatingPromises`, `noTsIgnore`, zod `import * as z`)
-- `@nsio/nsl` dev proxy (`http://<name>.localhost:3355`)
+- `@dotns/nsl` dev proxy (`http://<name>.localhost:3355`)
 - Cloudflare Pages / Workers / D1 + Drizzle (`DB_TYPE=libsql|d1`)
 - Next.js (App Router) for browser apps, Hono for Workers, Nuxt 4 for the dashboard
 - `next-intl` (`en`/`zh`) by default
