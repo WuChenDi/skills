@@ -53,7 +53,7 @@ The opinionated tech stack assumed by this skill. Read this when you need to kno
 
 ## Dev proxy
 
-- `@nsio/nsl` — every app is reachable at `http://<app-name>.localhost:3355` once dev is running. Don't add port-juggling logic.
+- `@dotns/nsl` — every app is reachable at `http://<app-name>.localhost:3355` once dev is running. Don't add port-juggling logic.
 - Each app's dev script is `nsl run <tool> dev` (`next dev`, `wrangler dev src/index.ts`, `nuxt dev`).
 
 ## Logging
