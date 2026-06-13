@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Disciplined pre-commit / pre-PR self-review: pull the diff, detect scope creep, walk a surface-area checklist, identify missing co-changes, render a green/yellow/red verdict. Stack-agnostic.",
-    "version": "2026.05.07"
+    "version": "2026.06.13"
   },
   "plugins": [
     {
