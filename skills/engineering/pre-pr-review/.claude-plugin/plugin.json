@@ -1,7 +1,7 @@
 {
   "name": "pre-pr-review",
   "version": "2026.06.13",
-  "description": "Pre-commit / pre-PR self-review of your own changes. Pulls the diff, scans for scope creep, surface-area issues, and missing co-changes; renders a green/yellow/red verdict before you commit or push.",
+  "description": "Pre-commit / pre-PR self-review of your own changes. Pulls the diff, scans for scope creep and surface-area issues, runs a depth-scaled risk scan, and flags missing co-changes; tags findings P0–P3 and renders a green/yellow/red verdict before you commit or push.",
   "author": {
     "name": "wudi"
   }
