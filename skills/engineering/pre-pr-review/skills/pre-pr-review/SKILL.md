@@ -27,7 +27,7 @@ MAIN_BRANCH=${MAIN_BRANCH:-$(git remote show origin 2>/dev/null | sed -n 's/.*HE
 git diff "${MAIN_BRANCH:-main}"...HEAD   # everything since branching off
 ```
 
-If `MAIN_BRANCH` comes back empty (no remote, detached HEAD), fall back to the branch the repo actually uses — confirm with `git branch -a` rather than guessing.
+The snippet defaults to `main` when detection yields nothing (no remote, detached HEAD). If `main` isn't your repo's default, set `MAIN_BRANCH` yourself — confirm the real name with `git branch -a` rather than guessing.
 
 `git add -N .` matters because plain `git diff` skips untracked files — without it, a brand-new file's contents never get walked. Drop it if the repo has noisy untracked artifacts you don't want surfaced.
 
@@ -115,7 +115,7 @@ The verdict is the headline; the P-levels are the detail under it:
 Verdict: green | yellow | red
 
 Green  — nothing above P3; ready to commit. Any P3s are still listed for a batch cleanup, but don't block.
-Yellow — passes automated checks, but: <1-2 specific P2 concerns>.
+Yellow — passes automated checks, but: <the P2 concern(s), summarized>.
 Red    — fix these before commit: <each P0/P1, with file:line and the fix>.
 ```
 
